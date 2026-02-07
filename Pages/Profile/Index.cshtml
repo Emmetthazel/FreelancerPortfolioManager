@@ -1,0 +1,54 @@
+﻿@page
+@model FreelancerPortfolioManager.Pages.Profile.IndexModel
+@{
+    ViewData["Title"] = "Mon profil";
+}
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+
+            <h1 class="mb-4">Mon profil</h1>
+
+            @if (TempData["StatusMessage"] != null)
+            {
+                <div class="alert alert-success">@TempData["StatusMessage"]</div>
+            }
+            @if (TempData["Debug"] != null)
+            {
+                <div class="alert alert-info">@TempData["Debug"]</div>
+            }
+
+            <div class="card mb-3">
+                <div class="card-body">
+
+                    <div class="row mb-2">
+                        <div class="col-sm-4 text-muted">Email: @Model.Email</div>
+                        @* <div class="col-sm-8">@Model.Email</div> *@
+                    </div>
+
+                    @if (!string.IsNullOrWhiteSpace(Model.PhoneNumber))
+                    {
+                        <div class="row mb-2">
+                            <div class="col-sm-4 text-muted">Téléphone</div>
+                            <div class="col-sm-8">@Model.PhoneNumber</div>
+                        </div>
+                    }
+                </div>
+
+                <div class="card-footer text-end">
+                    <a class="btn btn-primary me-2" asp-area="Identity" asp-page="/Account/Manage/Index">Gérer mon profil</a>
+                    <a class="btn btn-outline-secondary" asp-page="/Index">Retour</a>
+                </div>
+            </div>
+
+            <p class="text-muted">
+                Connecté en tant que : <strong>@User.Identity?.Name</strong>
+            </p>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

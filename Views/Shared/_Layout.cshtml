@@ -1,0 +1,294 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - FreelancerPortfolioManager</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/FreelancerPortfolioManager.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <style>
+        .sidebar {
+            min-height: calc(100vh - 56px);
+            background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%);
+            padding: 0;
+            position: fixed;
+            top: 56px;
+            left: 0;
+            width: 250px;
+            z-index: 1000;
+            transition: all 0.3s;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+        }
+
+        .sidebar.collapsed {
+            width: 70px;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 20px 0;
+            margin: 0;
+        }
+
+        .sidebar-menu li {
+            margin: 0;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            color: #ecf0f1;
+            text-decoration: none;
+            transition: all 0.3s;
+            border-left: 3px solid transparent;
+        }
+
+        .sidebar-menu a:hover {
+            background-color: rgba(255,255,255,0.1);
+            border-left-color: #3498db;
+            color: #fff;
+        }
+
+        .sidebar-menu a.active {
+            background-color: rgba(52, 152, 219, 0.2);
+            border-left-color: #3498db;
+            color: #3498db;
+        }
+
+        .sidebar-menu a i {
+            width: 25px;
+            margin-right: 15px;
+            text-align: center;
+        }
+
+        .sidebar.collapsed .sidebar-menu a span {
+            display: none;
+        }
+
+        .sidebar.collapsed .sidebar-menu a i {
+            margin-right: 0;
+        }
+
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+            transition: all 0.3s;
+        }
+
+        .main-content.expanded {
+            margin-left: 70px;
+        }
+
+        .sidebar-toggle {
+            position: fixed;
+            top: 70px;
+            left: 250px;
+            z-index: 1001;
+            background: #34495e;
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 0 5px 5px 0;
+            transition: all 0.3s;
+        }
+
+        .sidebar-toggle:hover {
+            background: #2c3e50;
+        }
+
+        .sidebar.collapsed ~ .main-content {
+            margin-left: 70px;
+        }
+
+        .sidebar.collapsed ~ .sidebar-toggle {
+            left: 70px;
+        }
+
+        @@media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.show {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .sidebar-toggle {
+                display: block;
+            }
+        }
+
+        .navbar-brand {
+            font-weight: bold;
+        }
+
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1030;
+            width: 100%;
+        }
+
+        body {
+            padding-top: 56px; /* Hauteur du navbar */
+        }
+
+        .main-content {
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark border-bottom box-shadow">
+            <div class="container-fluid">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+                    <i class="fas fa-briefcase"></i> Freelancer Portfolio
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-end">
+                    @await Html.PartialAsync("_LoginPartial")
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <aside class="sidebar" id="sidebar">
+        <ul class="sidebar-menu">
+            <li>
+                <a asp-controller="Home" asp-action="Index" class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "Home" ? "active" : "")">
+                    <i class="fas fa-home"></i>
+                    <span>Accueil</span>
+                </a>
+            </li>
+            <li>
+                <a asp-controller="Freelancers" asp-action="Index" class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "Freelancers" ? "active" : "")">
+                    <i class="fas fa-user-tie"></i>
+                    <span>Freelancers</span>
+                </a>
+            </li>
+            <li>
+                <a asp-controller="Clients" asp-action="Index" class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "Clients" ? "active" : "")">
+                    <i class="fas fa-users"></i>
+                    <span>Clients</span>
+                </a>
+            </li>
+            <li>
+                <a asp-controller="Projets" asp-action="Index" class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "Projets" ? "active" : "")">
+                    <i class="fas fa-project-diagram"></i>
+                    <span>Projets</span>
+                </a>
+            </li>
+            <li>
+                <a asp-controller="Contrats" asp-action="Index" class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "Contrats" ? "active" : "")">
+                    <i class="fas fa-file-contract"></i>
+                    <span>Contrats</span>
+                </a>
+            </li>
+            <li>
+                <a asp-controller="Factures" asp-action="Index" class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "Factures" ? "active" : "")">
+                    <i class="fas fa-file-invoice-dollar"></i>
+                    <span>Factures</span>
+                </a>
+            </li>
+            <li>
+                <a asp-controller="Paiements" asp-action="Index" class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "Paiements" ? "active" : "")">
+                    <i class="fas fa-money-bill-wave"></i>
+                    <span>Paiements</span>
+                </a>
+            </li>
+            <li>
+                <a asp-controller="Missions" asp-action="Index" class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "Missions" ? "active" : "")">
+                    <i class="fas fa-tasks"></i>
+                    <span>Missions</span>
+                </a>
+            </li>
+            <li>
+                <a asp-controller="Evaluations" asp-action="Index" class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "Evaluations" ? "active" : "")">
+                    <i class="fas fa-star"></i>
+                    <span>Évaluations</span>
+                </a>
+            </li>
+            <li>
+                <a asp-controller="Rapports" asp-action="Index" class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "Rapports" ? "active" : "")">
+                    <i class="fas fa-file-alt"></i>
+                    <span>Rapports</span>
+                </a>
+            </li>
+        </ul>
+    </aside>
+
+    <button class="sidebar-toggle" id="sidebarToggle" onclick="toggleSidebar()">
+        <i class="fas fa-chevron-left" id="toggleIcon"></i>
+    </button>
+
+    <div class="main-content" id="mainContent">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted" style="margin-left: 250px; transition: all 0.3s;" id="footer">
+        <div class="container">
+            &copy; 2025 - FreelancerPortfolioManager - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Validation scripts -->
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('mainContent');
+            const footer = document.getElementById('footer');
+            const toggleIcon = document.getElementById('toggleIcon');
+            
+            sidebar.classList.toggle('collapsed');
+            mainContent.classList.toggle('expanded');
+            
+            if (sidebar.classList.contains('collapsed')) {
+                toggleIcon.classList.remove('fa-chevron-left');
+                toggleIcon.classList.add('fa-chevron-right');
+                if (footer) footer.style.marginLeft = '70px';
+            } else {
+                toggleIcon.classList.remove('fa-chevron-right');
+                toggleIcon.classList.add('fa-chevron-left');
+                if (footer) footer.style.marginLeft = '250px';
+            }
+        }
+
+        // Mobile sidebar toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            const navbarToggler = document.querySelector('.navbar-toggler');
+            const sidebar = document.getElementById('sidebar');
+            
+            if (navbarToggler) {
+                navbarToggler.addEventListener('click', function() {
+                    sidebar.classList.toggle('show');
+                });
+            }
+        });
+    </script>
+    
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,160 @@
+﻿@model IEnumerable<FreelancerPortfolioManager.Models.Paiement>
+@{
+    ViewData["Title"] = "Paiements";
+}
+
+<div class="container mt-4">
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle"></i> @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle"></i> @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>
+            <i class="fas fa-money-bill-wave"></i> Paiements
+        </h2>
+        <a asp-action="Create" class="btn btn-success">
+            <i class="fas fa-plus"></i> Créer un Paiement
+        </a>
+    </div>
+
+    <div class="card shadow">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th><i class="fas fa-euro-sign"></i> Montant</th>
+                            <th><i class="fas fa-calendar"></i> Date de paiement</th>
+                            <th><i class="fas fa-credit-card"></i> Moyen de paiement</th>
+                            <th><i class="fas fa-hashtag"></i> Référence</th>
+                            <th><i class="fas fa-file-invoice"></i> Facture</th>
+                            <th class="text-center"><i class="fas fa-cog"></i> Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.Any())
+                        {
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        <strong>@item.Montant.ToString("C")</strong>
+                                    </td>
+                                    <td>
+                                        <small>@item.DatePaiement.ToString("dd/MM/yyyy")</small>
+                                    </td>
+                                    <td>@item.MoyenPaiement</td>
+                                    <td>@item.Reference</td>
+                                    <td>@(item.Facture?.Numero ?? "N/A")</td>
+                                    <td class="text-center">
+                                        <div class="btn-group" role="group">
+                                            <a asp-action="Details" asp-route-id="@item.Id"
+                                               class="btn btn-sm btn-outline-primary" title="Détails">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a asp-action="Edit" asp-route-id="@item.Id"
+                                               class="btn btn-sm btn-outline-warning" title="Modifier">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <button type="button" class="btn btn-sm btn-outline-danger"
+                                                    data-bs-toggle="modal" data-bs-target="#deleteModal-@item.Id"
+                                                    title="Supprimer">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <!-- Modal de confirmation -->
+                                <div class="modal fade" id="deleteModal-@item.Id" tabindex="-1">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header bg-danger text-white">
+                                                <h5 class="modal-title">
+                                                    <i class="fas fa-exclamation-triangle"></i> Confirmer la suppression
+                                                </h5>
+                                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <p>Êtes-vous sûr de vouloir supprimer ce paiement ?</p>
+                                                <p class="text-danger"><strong>Cette action est irréversible !</strong></p>
+                                                <p class="mb-0"><strong>Montant :</strong> @item.Montant.ToString("C")</p>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                                                <form asp-action="Delete" asp-route-id="@item.Id" method="post" class="d-inline">
+                                                    @Html.AntiForgeryToken()
+                                                    <button type="submit" class="btn btn-danger">
+                                                        <i class="fas fa-trash"></i> Supprimer
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="6" class="text-center py-5">
+                                    <i class="fas fa-money-bill-wave fa-3x text-muted mb-3 d-block"></i>
+                                    <h5 class="text-muted">Aucun paiement trouvé</h5>
+                                    <p class="text-muted">Créez votre premier paiement pour commencer.</p>
+                                    <div class="mt-3">
+                                        <a asp-action="Create" class="btn btn-success">
+                                            <i class="fas fa-plus"></i> Créer un Paiement
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    @if (Model.Any())
+    {
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h3 class="text-primary">@Model.Count()</h3>
+                        <p class="text-muted mb-0">Paiements enregistrés</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h3 class="text-success">@Model.Sum(p => p.Montant).ToString("C")</h3>
+                        <p class="text-muted mb-0">Montant total</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<style>
+    .btn-group .btn {
+        margin: 0 2px;
+    }
+
+    .table td, .table th {
+        vertical-align: middle;
+    }
+</style>

@@ -1,0 +1,129 @@
+﻿@model FreelancerPortfolioManager.Models.Projet
+@{
+    ViewData["Title"] = "Détails du Projet";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-10 offset-md-1">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">
+                        <i class="fas fa-project-diagram"></i> @Model.Titre
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <dl class="row">
+                                <dt class="col-sm-5">Titre :</dt>
+                                <dd class="col-sm-7"><strong>@Model.Titre</strong></dd>
+
+                                <dt class="col-sm-5">Description :</dt>
+                                <dd class="col-sm-7">@Model.Description</dd>
+
+                                <dt class="col-sm-5">Date de début :</dt>
+                                <dd class="col-sm-7">@Model.DateDebut.ToString("dd/MM/yyyy")</dd>
+
+                                <dt class="col-sm-5">Date de fin :</dt>
+                                <dd class="col-sm-7">@(Model.DateFin?.ToString("dd/MM/yyyy") ?? "Non définie")</dd>
+
+                                <dt class="col-sm-5">Budget :</dt>
+                                <dd class="col-sm-7">
+                                    <span class="badge bg-success">@Model.Budget.ToString("C")</span>
+                                </dd>
+                            </dl>
+                        </div>
+
+                        <div class="col-md-6">
+                            <dl class="row">
+                                <dt class="col-sm-5">Statut :</dt>
+                                <dd class="col-sm-7">
+                                    @{
+                                        var statutClass = Model.Statut switch
+                                        {
+                                            StatutProjet.EN_ATTENTE => "bg-secondary",
+                                            StatutProjet.EN_COURS => "bg-primary",
+                                            StatutProjet.TERMINE => "bg-success",
+                                            StatutProjet.ANNULE => "bg-danger",
+                                            _ => "bg-secondary"
+                                        };
+                                    }
+                                    <span class="badge @statutClass">@Model.Statut</span>
+                                </dd>
+
+                                <dt class="col-sm-5">Taux d'avancement :</dt>
+                                <dd class="col-sm-7">
+                                    <div class="progress" style="height: 25px;">
+                                        <div class="progress-bar" role="progressbar" style="width: @Model.TauxAvancement%">
+                                            @Model.TauxAvancement%
+                                        </div>
+                                    </div>
+                                </dd>
+
+                                <dt class="col-sm-5">Freelancer :</dt>
+                                <dd class="col-sm-7">@(Model.Freelancer?.Email ?? "N/A")</dd>
+
+                                <dt class="col-sm-5">Client :</dt>
+                                <dd class="col-sm-7">@(Model.Client?.NomEntreprise ?? "N/A")</dd>
+                            </dl>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <div class="d-flex gap-2 flex-wrap">
+                        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">
+                            <i class="fas fa-edit"></i> Modifier
+                        </a>
+
+                        <a asp-action="Index" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left"></i> Retour à la liste
+                        </a>
+
+                        <button type="button" class="btn btn-danger ms-auto"
+                                data-bs-toggle="modal" data-bs-target="#deleteModal">
+                            <i class="fas fa-trash"></i> Supprimer
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de confirmation de suppression -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="deleteModalLabel">
+                    <i class="fas fa-exclamation-triangle"></i> Confirmer la suppression
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Êtes-vous sûr de vouloir supprimer ce projet ?</p>
+                <p class="text-danger"><strong>Cette action est irréversible !</strong></p>
+                <p class="mb-0"><strong>Projet :</strong> @Model.Titre</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times"></i> Annuler
+                </button>
+                <form asp-action="Delete" asp-route-id="@Model.Id" method="post" class="d-inline">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash"></i> Supprimer définitivement
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .gap-2 {
+        gap: 0.5rem;
+    }
+</style>

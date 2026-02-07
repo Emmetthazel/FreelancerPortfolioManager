@@ -1,0 +1,151 @@
+﻿@{
+    ViewData["Title"] = "Générer un Rapport";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">
+                        <i class="fas fa-file-pdf"></i> Générer un Rapport PDF
+                    </h3>
+                </div>
+                <div class="card-body p-4">
+                    <form asp-action="Generate" method="post">
+                        <div asp-validation-summary="All" class="alert alert-danger"></div>
+
+                        <div class="mb-4">
+                            <label for="typeRapport" class="form-label">
+                                <i class="fas fa-clipboard-list"></i> Type de Rapport
+                            </label>
+                            <select name="typeRapport" id="typeRapport" class="form-select" required>
+                                <option value="">-- Sélectionner un type --</option>
+                                <option value="Mensuel">Rapport Mensuel</option>
+                                <option value="Trimestriel">Rapport Trimestriel</option>
+                                <option value="Annuel">Rapport Annuel</option>
+                                <option value="Personnalise">Période Personnalisée</option>
+                            </select>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="dateDebut" class="form-label">
+                                    <i class="fas fa-calendar-alt"></i> Date de Début
+                                </label>
+                                <input type="date" name="dateDebut" id="dateDebut" class="form-control" required />
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="dateFin" class="form-label">
+                                    <i class="fas fa-calendar-alt"></i> Date de Fin
+                                </label>
+                                <input type="date" name="dateFin" id="dateFin" class="form-control" required />
+                            </div>
+                        </div>
+
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i>
+                            <strong>Information :</strong> Le rapport inclura tous les projets, clients et factures de la période sélectionnée.
+                        </div>
+
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-cog fa-spin"></i> Générer le Rapport PDF
+                            </button>
+                        </div>
+
+                        <div class="text-center mt-3">
+                            <a asp-action="Index" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left"></i> Retour à la liste
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Aide pour les types de rapports -->
+            <div class="card mt-4">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0"><i class="fas fa-question-circle"></i> Types de Rapports</h5>
+                </div>
+                <div class="card-body">
+                    <dl class="row mb-0">
+                        <dt class="col-sm-3">Mensuel</dt>
+                        <dd class="col-sm-9">Rapport sur un mois spécifique</dd>
+
+                        <dt class="col-sm-3">Trimestriel</dt>
+                        <dd class="col-sm-9">Rapport sur 3 mois consécutifs</dd>
+
+                        <dt class="col-sm-3">Annuel</dt>
+                        <dd class="col-sm-9">Rapport sur une année complète</dd>
+
+                        <dt class="col-sm-3">Personnalisé</dt>
+                        <dd class="col-sm-9 mb-0">Période personnalisée selon vos besoins</dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Pré-remplir les dates selon le type sélectionné
+        document.getElementById('typeRapport').addEventListener('change', function() {
+            const type = this.value;
+            const today = new Date();
+            let dateDebut, dateFin;
+
+            switch(type) {
+                case 'Mensuel':
+                    // Mois dernier
+                    dateDebut = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+                    dateFin = new Date(today.getFullYear(), today.getMonth(), 0);
+                    break;
+
+                case 'Trimestriel':
+                    // Trimestre dernier
+                    const currentQuarter = Math.floor(today.getMonth() / 3);
+                    dateDebut = new Date(today.getFullYear(), (currentQuarter - 1) * 3, 1);
+                    dateFin = new Date(today.getFullYear(), currentQuarter * 3, 0);
+                    break;
+
+                case 'Annuel':
+                    // Année dernière
+                    dateDebut = new Date(today.getFullYear() - 1, 0, 1);
+                    dateFin = new Date(today.getFullYear() - 1, 11, 31);
+                    break;
+
+                default:
+                    return;
+            }
+
+            document.getElementById('dateDebut').value = dateDebut.toISOString().split('T')[0];
+            document.getElementById('dateFin').value = dateFin.toISOString().split('T')[0];
+        });
+
+        // Validation des dates
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const dateDebut = new Date(document.getElementById('dateDebut').value);
+            const dateFin = new Date(document.getElementById('dateFin').value);
+
+            if (dateDebut > dateFin) {
+                e.preventDefault();
+                alert('La date de début doit être antérieure à la date de fin.');
+            }
+        });
+    </script>
+}
+
+<style>
+    .card {
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .btn-lg {
+        padding: 12px 24px;
+        font-size: 1.1rem;
+    }
+</style>

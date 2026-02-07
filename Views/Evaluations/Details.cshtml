@@ -1,0 +1,116 @@
+﻿@model FreelancerPortfolioManager.Models.Evaluation
+@{
+    ViewData["Title"] = "Détails de l'Évaluation";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-10 offset-md-1">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">
+                        <i class="fas fa-star"></i> Évaluation
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <dl class="row">
+                                <dt class="col-sm-5">Note :</dt>
+                                <dd class="col-sm-7">
+                                    @{
+                                        var noteClass = Model.Note switch
+                                        {
+                                            5 => "bg-success",
+                                            4 => "bg-info",
+                                            3 => "bg-warning",
+                                            2 => "bg-danger",
+                                            1 => "bg-dark",
+                                            _ => "bg-secondary"
+                                        };
+                                    }
+                                    <span class="badge @noteClass">
+                                        <i class="fas fa-star"></i> @Model.Note/5
+                                    </span>
+                                </dd>
+
+                                <dt class="col-sm-5">Date d'évaluation :</dt>
+                                <dd class="col-sm-7">@Model.DateEvaluation.ToString("dd/MM/yyyy")</dd>
+
+                                <dt class="col-sm-5">Client :</dt>
+                                <dd class="col-sm-7">@(Model.Client?.NomEntreprise ?? "N/A")</dd>
+                            </dl>
+                        </div>
+
+                        <div class="col-md-6">
+                            <dl class="row">
+                                <dt class="col-sm-5">Freelancer :</dt>
+                                <dd class="col-sm-7">@(Model.Freelancer?.Email ?? "N/A")</dd>
+                            </dl>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <h5><i class="fas fa-comment"></i> Commentaire</h5>
+                        <div class="border p-3 rounded bg-light">
+                            @Model.Commentaire
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <div class="d-flex gap-2 flex-wrap">
+                        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">
+                            <i class="fas fa-edit"></i> Modifier
+                        </a>
+
+                        <a asp-action="Index" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left"></i> Retour à la liste
+                        </a>
+
+                        <button type="button" class="btn btn-danger ms-auto"
+                                data-bs-toggle="modal" data-bs-target="#deleteModal">
+                            <i class="fas fa-trash"></i> Supprimer
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de confirmation de suppression -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="deleteModalLabel">
+                    <i class="fas fa-exclamation-triangle"></i> Confirmer la suppression
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Êtes-vous sûr de vouloir supprimer cette évaluation ?</p>
+                <p class="text-danger"><strong>Cette action est irréversible !</strong></p>
+                <p class="mb-0"><strong>Note :</strong> @Model.Note/5</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times"></i> Annuler
+                </button>
+                <form asp-action="Delete" asp-route-id="@Model.Id" method="post" class="d-inline">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash"></i> Supprimer définitivement
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .gap-2 {
+        gap: 0.5rem;
+    }
+</style>

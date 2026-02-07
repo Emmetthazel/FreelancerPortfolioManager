@@ -1,0 +1,176 @@
+﻿@model IEnumerable<FreelancerPortfolioManager.Models.Mission>
+@{
+    ViewData["Title"] = "Missions";
+}
+
+<div class="container mt-4">
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle"></i> @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle"></i> @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>
+            <i class="fas fa-tasks"></i> Missions
+        </h2>
+        <a asp-action="Create" class="btn btn-success">
+            <i class="fas fa-plus"></i> Créer une Mission
+        </a>
+    </div>
+
+    <div class="card shadow">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th><i class="fas fa-align-left"></i> Description</th>
+                            <th><i class="fas fa-calendar"></i> Date de début</th>
+                            <th><i class="fas fa-calendar-check"></i> Date de fin</th>
+                            <th><i class="fas fa-clock"></i> Heures</th>
+                            <th><i class="fas fa-euro-sign"></i> Tarif horaire</th>
+                            <th><i class="fas fa-euro-sign"></i> Montant total</th>
+                            <th><i class="fas fa-project-diagram"></i> Projet</th>
+                            <th class="text-center"><i class="fas fa-cog"></i> Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.Any())
+                        {
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        <strong>@(item.Description.Length > 50 ? item.Description.Substring(0, 50) + "..." : item.Description)</strong>
+                                    </td>
+                                    <td>
+                                        <small>@item.DateDebut.ToString("dd/MM/yyyy")</small>
+                                    </td>
+                                    <td>
+                                        <small>@(item.DateFin?.ToString("dd/MM/yyyy") ?? "En cours")</small>
+                                    </td>
+                                    <td>@item.NombreHeures h</td>
+                                    <td>@item.TarifHoraire.ToString("C")</td>
+                                    <td>
+                                        <strong>@item.MontantTotal.ToString("C")</strong>
+                                    </td>
+                                    <td>@(item.Projet?.Titre ?? "N/A")</td>
+                                    <td class="text-center">
+                                        <div class="btn-group" role="group">
+                                            <a asp-action="Details" asp-route-id="@item.Id"
+                                               class="btn btn-sm btn-outline-primary" title="Détails">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a asp-action="Edit" asp-route-id="@item.Id"
+                                               class="btn btn-sm btn-outline-warning" title="Modifier">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <button type="button" class="btn btn-sm btn-outline-danger"
+                                                    data-bs-toggle="modal" data-bs-target="#deleteModal-@item.Id"
+                                                    title="Supprimer">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <!-- Modal de confirmation -->
+                                <div class="modal fade" id="deleteModal-@item.Id" tabindex="-1">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header bg-danger text-white">
+                                                <h5 class="modal-title">
+                                                    <i class="fas fa-exclamation-triangle"></i> Confirmer la suppression
+                                                </h5>
+                                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <p>Êtes-vous sûr de vouloir supprimer cette mission ?</p>
+                                                <p class="text-danger"><strong>Cette action est irréversible !</strong></p>
+                                                <p class="mb-0"><strong>Mission :</strong> @(item.Description.Length > 50 ? item.Description.Substring(0, 50) + "..." : item.Description)</p>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                                                <form asp-action="Delete" asp-route-id="@item.Id" method="post" class="d-inline">
+                                                    @Html.AntiForgeryToken()
+                                                    <button type="submit" class="btn btn-danger">
+                                                        <i class="fas fa-trash"></i> Supprimer
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="8" class="text-center py-5">
+                                    <i class="fas fa-tasks fa-3x text-muted mb-3 d-block"></i>
+                                    <h5 class="text-muted">Aucune mission trouvée</h5>
+                                    <p class="text-muted">Créez votre première mission pour commencer.</p>
+                                    <div class="mt-3">
+                                        <a asp-action="Create" class="btn btn-success">
+                                            <i class="fas fa-plus"></i> Créer une Mission
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    @if (Model.Any())
+    {
+        <div class="row mt-4">
+            <div class="col-md-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h3 class="text-primary">@Model.Count()</h3>
+                        <p class="text-muted mb-0">Missions totales</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h3 class="text-info">@Model.Sum(m => m.NombreHeures)</h3>
+                        <p class="text-muted mb-0">Heures totales</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h3 class="text-success">@Model.Sum(m => m.MontantTotal).ToString("C")</h3>
+                        <p class="text-muted mb-0">Montant total</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<style>
+    .btn-group .btn {
+        margin: 0 2px;
+    }
+
+    .table td, .table th {
+        vertical-align: middle;
+    }
+</style>

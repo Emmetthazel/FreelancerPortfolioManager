@@ -1,0 +1,139 @@
+﻿@model FreelancerPortfolioManager.Models.Projet
+@{
+    ViewData["Title"] = "Modifier le Projet";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card shadow">
+                <div class="card-header bg-warning text-dark">
+                    <h3 class="mb-0">
+                        <i class="fas fa-edit"></i> Modifier le Projet
+                    </h3>
+                </div>
+                <div class="card-body p-4">
+                    <form asp-action="Edit" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" asp-for="Id" />
+
+                        <div class="mb-3">
+                            <label asp-for="Titre" class="form-label">
+                                <i class="fas fa-heading"></i> Titre
+                            </label>
+                            <input asp-for="Titre" class="form-control" />
+                            <span asp-validation-for="Titre" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Description" class="form-label">
+                                <i class="fas fa-align-left"></i> Description
+                            </label>
+                            <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="DateDebut" class="form-label">
+                                    <i class="fas fa-calendar-alt"></i> Date de Début
+                                </label>
+                                <input asp-for="DateDebut" class="form-control" type="date" />
+                                <span asp-validation-for="DateDebut" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="DateFin" class="form-label">
+                                    <i class="fas fa-calendar-check"></i> Date de Fin
+                                </label>
+                                <input asp-for="DateFin" class="form-control" type="date" />
+                                <span asp-validation-for="DateFin" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Budget" class="form-label">
+                                    <i class="fas fa-euro-sign"></i> Budget
+                                </label>
+                                <input asp-for="Budget" class="form-control" type="number" step="0.01" />
+                                <span asp-validation-for="Budget" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="TauxAvancement" class="form-label">
+                                    <i class="fas fa-percent"></i> Taux d'avancement (%)
+                                </label>
+                                <input asp-for="TauxAvancement" class="form-control" type="number" min="0" max="100" />
+                                <span asp-validation-for="TauxAvancement" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Statut" class="form-label">
+                                <i class="fas fa-info-circle"></i> Statut
+                            </label>
+                            <select asp-for="Statut" class="form-select"
+                                    asp-items="Html.GetEnumSelectList<FreelancerPortfolioManager.Models.StatutProjet>()">
+                            </select>
+                            <span asp-validation-for="Statut" class="text-danger"></span>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="FreelancerId" class="form-label">
+                                    <i class="fas fa-user-tie"></i> Freelancer
+                                </label>
+                                <select asp-for="FreelancerId" class="form-select" asp-items="ViewBag.FreelancerId">
+                                    <option value="">-- Sélectionner un freelancer --</option>
+                                </select>
+                                <span asp-validation-for="FreelancerId" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="ClientId" class="form-label">
+                                    <i class="fas fa-building"></i> Client
+                                </label>
+                                <select asp-for="ClientId" class="form-select" asp-items="ViewBag.ClientId">
+                                    <option value="">-- Sélectionner un client --</option>
+                                </select>
+                                <span asp-validation-for="ClientId" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" class="btn btn-warning btn-lg">
+                                <i class="fas fa-save"></i> Enregistrer les Modifications
+                            </button>
+                        </div>
+
+                        <div class="text-center mt-3">
+                            <a asp-action="Index" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left"></i> Retour à la liste
+                            </a>
+                            <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-outline-info">
+                                <i class="fas fa-eye"></i> Voir les détails
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+
+<style>
+    .card {
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .btn-lg {
+        padding: 12px 24px;
+        font-size: 1.1rem;
+    }
+</style>

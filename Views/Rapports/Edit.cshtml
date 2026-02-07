@@ -1,0 +1,107 @@
+﻿@model FreelancerPortfolioManager.Models.Rapport
+
+@{
+    ViewData["Title"] = "Modifier le Rapport";
+}
+
+<div class="container mt-4">
+<div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card shadow">
+                <div class="card-header bg-warning text-dark">
+                    <h3 class="mb-0">
+                        <i class="fas fa-edit"></i> Modifier le Rapport
+                    </h3>
+                </div>
+                <div class="card-body p-4">
+                    <form asp-action="Edit" method="post">
+                        @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="Id" />
+                        <input type="hidden" asp-for="DateGeneration" />
+                        <input type="hidden" asp-for="FreelancerId" />
+                        <input type="hidden" asp-for="CheminPDF" />
+
+                        <div class="mb-3">
+                            <label asp-for="Titre" class="form-label">
+                                <i class="fas fa-heading"></i> Titre du Rapport
+                            </label>
+                <input asp-for="Titre" class="form-control" />
+                <span asp-validation-for="Titre" class="text-danger"></span>
+            </div>
+
+                        <div class="mb-3">
+                            <label asp-for="TypeRapport" class="form-label">
+                                <i class="fas fa-tag"></i> Type de Rapport
+                            </label>
+                            <select asp-for="TypeRapport" class="form-select" asp-items="ViewBag.TypesRapport">
+                                <option value="">-- Sélectionner un type --</option>
+                            </select>
+                <span asp-validation-for="TypeRapport" class="text-danger"></span>
+            </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="DateDebut" class="form-label">
+                                    <i class="fas fa-calendar-alt"></i> Date de Début
+                                </label>
+                                <input asp-for="DateDebut" class="form-control" type="date" />
+                <span asp-validation-for="DateDebut" class="text-danger"></span>
+            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="DateFin" class="form-label">
+                                    <i class="fas fa-calendar-alt"></i> Date de Fin
+                                </label>
+                                <input asp-for="DateFin" class="form-control" type="date" />
+                <span asp-validation-for="DateFin" class="text-danger"></span>
+            </div>
+            </div>
+
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" class="btn btn-warning btn-lg">
+                                <i class="fas fa-save"></i> Enregistrer les Modifications
+                            </button>
+            </div>
+
+                        <div class="text-center mt-3">
+                            <a asp-action="Index" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left"></i> Retour à la liste
+                            </a>
+                            <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-outline-info">
+                                <i class="fas fa-eye"></i> Voir les détails
+                            </a>
+            </div>
+        </form>
+    </div>
+</div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        // Validation des dates
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const dateDebut = new Date(document.getElementById('DateDebut').value);
+            const dateFin = new Date(document.getElementById('DateFin').value);
+
+            if (dateDebut > dateFin) {
+                e.preventDefault();
+                alert('La date de début doit être antérieure à la date de fin.');
+            }
+        });
+    </script>
+}
+
+<style>
+    .card {
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .btn-lg {
+        padding: 12px 24px;
+        font-size: 1.1rem;
+    }
+</style>
